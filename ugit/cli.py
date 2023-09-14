@@ -24,7 +24,6 @@ def parse_args():
 
     cat_file_parser = subparser.add_parser('cat-file')
     cat_file_parser.add_argument('object')
-    cat_file_parser.add_argument('-t','--type')
     cat_file_parser.set_defaults(func=cat_file)
     
     args = parser.parse_args()
