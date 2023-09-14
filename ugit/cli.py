@@ -24,6 +24,7 @@ def parse_args():
 
     cat_file_parser = subparser.add_parser('cat-file')
     cat_file_parser.add_argument('object')
+    cat_file_parser.add_argument('-t','--type')
     cat_file_parser.set_defaults(func=cat_file)
     
     args = parser.parse_args()
@@ -34,12 +35,11 @@ def init(args):
 
 def hash_object(args):
     with open(args.file, 'rb') as file:
-        print(data.hash_object(file.read()))
+        print(data.hash_object(file.read()), 'test')   # can also pass in type_ parameter
 
 def cat_file(args):
     sys.stdout.flush()
-    sys.stdout.buffer.write(data.get_object(args.object))
-    print(data.get_object(args.object))
+    sys.stdout.buffer.write(data.get_object(args.object, expected=None))   # can pass a second argument called expected
 
 if __name__ == "__main__":
     main()

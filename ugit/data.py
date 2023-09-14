@@ -11,13 +11,22 @@ def init():
         os.mkdir(f'{GIT_DIR}/objects')
         print("ugit repo initialised")
 
-def hash_object(data):
-    object =  hashlib.sha1(data).hexdigest()
+def hash_object(data, type_='blob'):
+    data = type_.encode() + b'\x00' + data
+    object = hashlib.sha1(data).hexdigest()
     with open(f'{GIT_DIR}/objects/{object}', 'wb') as file:
         file.write(data)
     return object
 
-def get_object(object):
+def get_object(object, expected='blob'):
     with open(f'{GIT_DIR}/objects/{object}', 'rb') as file:
-        return file.read()
+        obj = file.read()
+
+    type_, data = obj.split(b'\x00')
+    type_ = type_.decode()
+
+    if expected is not None:
+        assert type_==expected, f'expected {expected}, got {type_}'
+    return data
+
 
