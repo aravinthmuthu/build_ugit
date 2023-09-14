@@ -1,9 +1,18 @@
 import os
+import hashlib
+
+GIT_DIR = ".ugit"
 
 def init():
-    GIT_DIR = ".ugit"
     if os.path.exists(GIT_DIR):
         print("ugit repo already initialised")
     else:
         os.mkdir(GIT_DIR)
+        os.mkdir(f'{GIT_DIR}/objects')
         print("ugit repo initialised")
+
+def hash_object(data):
+    shakey =  hashlib.sha1(data).hexdigest()
+    with open(f'{GIT_DIR}/objects/{shakey}', 'wb') as file:
+        file.write(data)
+    return shakey

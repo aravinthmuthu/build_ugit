@@ -17,6 +17,10 @@ def parse_args():
     init_parser = subparser.add_parser('init')
     init_parser.set_defaults(func=init)
 
+    hash_object_parser = subparser.add_parser('hash-object')
+    hash_object_parser.add_argument('file')
+    hash_object_parser.set_defaults(func=hash_object)
+
     commit_parser = subparser.add_parser('commit')
     commit_parser.add_argument("-m","--message")
     commit_parser.set_defaults(func=commit)
@@ -30,6 +34,10 @@ def parse_args():
     
 def init(args):
     data.init()
+
+def hash_object(args):
+    with open(args.file, 'rb') as file:
+        print(data.hash_object(file.read()))
 
 def add(args):
     print("files ready to be added to staging:",args.files)
