@@ -1,5 +1,6 @@
 import argparse
 from . import data
+import sys
 
 def main():
     args = parse_args()
@@ -21,13 +22,9 @@ def parse_args():
     hash_object_parser.add_argument('file')
     hash_object_parser.set_defaults(func=hash_object)
 
-    commit_parser = subparser.add_parser('commit')
-    commit_parser.add_argument("-m","--message")
-    commit_parser.set_defaults(func=commit)
-
-    add_parser = subparser.add_parser('add')
-    add_parser.add_argument("files", nargs='*')
-    add_parser.set_defaults(func=add)
+    cat_file_parser = subparser.add_parser('cat-file')
+    cat_file_parser.add_argument('object')
+    cat_file_parser.set_defaults(func=cat_file)
     
     args = parser.parse_args()
     return args
@@ -39,12 +36,10 @@ def hash_object(args):
     with open(args.file, 'rb') as file:
         print(data.hash_object(file.read()))
 
-def add(args):
-    print("files ready to be added to staging:",args.files)
-
-def commit(args):
-    print("ready to commit")
-    print("commit message :", args.message)
+def cat_file(args):
+    sys.stdout.flush()
+    sys.stdout.buffer.write(data.get_object(args.object))
+    print(data.get_object(args.object))
 
 if __name__ == "__main__":
     main()

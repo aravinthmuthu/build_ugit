@@ -12,7 +12,12 @@ def init():
         print("ugit repo initialised")
 
 def hash_object(data):
-    shakey =  hashlib.sha1(data).hexdigest()
-    with open(f'{GIT_DIR}/objects/{shakey}', 'wb') as file:
+    object =  hashlib.sha1(data).hexdigest()
+    with open(f'{GIT_DIR}/objects/{object}', 'wb') as file:
         file.write(data)
-    return shakey
+    return object
+
+def get_object(object):
+    with open(f'{GIT_DIR}/objects/{object}', 'rb') as file:
+        return file.read()
+
