@@ -1,4 +1,5 @@
 import argparse
+from . import data
 
 def main():
     args = parse_args()
@@ -28,7 +29,7 @@ def parse_args():
     return args
     
 def init(args):
-    print("hello world")
+    data.init()
 
 def add(args):
     print("files ready to be added to staging:",args.files)
