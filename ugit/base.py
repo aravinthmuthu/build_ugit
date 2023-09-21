@@ -14,12 +14,12 @@ def write_tree (directory='.'):
                 obj = file.read()
                 type_ = 'blob'
                 oid = data.hash_object(obj)
-                print(oid, full_path)
 
         elif os.path.isdir(full_path):
             type_ = 'tree'
             oid = write_tree(full_path)
         
+        print(oid, full_path) 
         entries.append((item, oid, type_))
     
     tree = ''
@@ -29,7 +29,37 @@ def write_tree (directory='.'):
 
     return data.hash_object(tree.encode(), 'tree')
 
-    
+
+def get_tree_entries(tree_oid):
+    tree_data = data.get_object(tree_oid, expected='tree').decode().splitlines()
+    entries = []
+    for line in tree_data:
+        entries.append(line.split(" "))
+
+    return entries
+
+
+def read_tree(tree_oid, path='.'):
+
+    if not os.path.exists(path):
+        os.mkdir(path)
+
+    entries = get_tree_entries(tree_oid)
+    for entry in entries:
+        type_, oid, name = entry
+        assert '/' not in name
+        assert name not in ['.','..']
+
+        if type_ == 'blob':
+            with open(os.path.join(path,name), 'wb') as file:
+                print(oid, os.path.join(path,name))
+                file.write(data.get_object(oid, expected='blob'))
+        elif type_ == 'tree':
+            read_tree(oid, path=os.path.join(path,name))
+        else:
+            assert False, f'Unknown entry type {type_}'
+
+
 
 def is_ignored(path):
     # TO-DO add regex support
