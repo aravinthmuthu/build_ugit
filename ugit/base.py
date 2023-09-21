@@ -3,15 +3,33 @@ import os
 
 def write_tree (directory='.'):
     items = os.listdir(directory)
+    entries = []
     for item in items:
         full_path = os.path.join(directory,item)
-        if not is_ignored(full_path):
-            if os.path.isfile(full_path):
-                with open(full_path, 'rb') as file:
-                    obj = file.read()
-                    print(data.hash_object(obj), full_path)
-            elif os.path.isdir(full_path):
-                write_tree(full_path)
+        if is_ignored(full_path):
+            continue
+
+        if os.path.isfile(full_path):
+            with open(full_path, 'rb') as file:
+                obj = file.read()
+                type_ = 'blob'
+                oid = data.hash_object(obj)
+                print(oid, full_path)
+
+        elif os.path.isdir(full_path):
+            type_ = 'tree'
+            oid = write_tree(full_path)
+        
+        entries.append((item, oid, type_))
+    
+    tree = ''
+    for entry in entries:
+        item, oid, type_ = entry
+        tree = tree + f'{type_} {oid} {item}\n'
+
+    return data.hash_object(tree.encode(), 'tree')
+
+    
 
 def is_ignored(path):
     # TO-DO add regex support
